@@ -1,12 +1,11 @@
 import React from 'react';
-import { Box } from '@shopify/shop-minis-platform-sdk';
 import PurchaseWrapped from './components/PurchaseWrapped';
 
 function App() {
   return (
-    <Box flex={1}>
+    <div style={{ flex: 1, height: '100vh', width: '100vw' }}>
       <PurchaseWrapped />
-    </Box>
+    </div>
   );
 }
 

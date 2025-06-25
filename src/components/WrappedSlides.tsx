@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Box, Text } from '@shopify/shop-minis-platform-sdk';
 import type { WrappedData } from '../types';
 
 interface WrappedSlidesProps {
@@ -10,55 +9,54 @@ interface WrappedSlidesProps {
 export default function WrappedSlides({ wrappedData, onComplete }: WrappedSlidesProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isStarted, setIsStarted] = useState(false);
-  const [displayValue, setDisplayValue] = useState<string>('');
   const autoAdvanceRef = useRef<NodeJS.Timeout>();
 
   const slides = [
     {
       title: '2024 Shopping Wrapped',
       description: 'Your year in purchases ✨',
-      backgroundColor: 'purple700',
+      backgroundColor: '#7c3aed',
       emoji: '🛍️'
     },
     {
       title: 'You spent',
       value: `$${wrappedData.totalSpent.toFixed(2)}`,
       description: 'this year',
-      backgroundColor: 'pink500',
+      backgroundColor: '#ec4899',
       emoji: '💰'
     },
     {
       title: 'Across',
       value: wrappedData.orderCount,
       description: wrappedData.orderCount === 1 ? 'order' : 'orders',
-      backgroundColor: 'blue500',
+      backgroundColor: '#3b82f6',
       emoji: '📦'
     },
     {
       title: 'Your obsession',
       value: wrappedData.favoriteCategory,
       description: 'was your most shopped category',
-      backgroundColor: 'green500',
+      backgroundColor: '#10b981',
       emoji: '❤️'
     },
     {
       title: 'Brand loyalty',
       value: wrappedData.topBrand,
       description: 'was your go-to brand',
-      backgroundColor: 'orange500',
+      backgroundColor: '#f59e0b',
       emoji: '⭐'
     },
     {
       title: 'You are',
       value: wrappedData.personalityType,
       description: 'based on your shopping patterns',
-      backgroundColor: 'cyan500',
+      backgroundColor: '#06b6d4',
       emoji: '🎭'
     },
     {
       title: "That's a wrap!",
       description: 'Ready for some recommendations?',
-      backgroundColor: 'indigo500',
+      backgroundColor: '#6366f1',
       emoji: '✨'
     }
   ];
@@ -96,120 +94,130 @@ export default function WrappedSlides({ wrappedData, onComplete }: WrappedSlides
 
   if (!isStarted) {
     return (
-      <Box 
-        flex={1} 
-        justifyContent="center" 
-        alignItems="center" 
-        backgroundColor="purple700"
-        padding="l"
-        onPress={startWrapped}
+      <div 
+        style={{
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#7c3aed',
+          color: 'white',
+          padding: '20px',
+          cursor: 'pointer'
+        }}
+        onClick={startWrapped}
       >
-        <Text variant="displayLarge" textAlign="center" marginBottom="m">
-          🛍️
-        </Text>
-        <Text variant="headingLarge" color="white" textAlign="center" marginBottom="s">
+        <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🛍️</div>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '10px', textAlign: 'center' }}>
           Your 2024 Shopping Wrapped
-        </Text>
-        <Text variant="bodyLarge" color="whiteAlpha700" textAlign="center" marginBottom="xl">
+        </h1>
+        <p style={{ fontSize: '1.2rem', marginBottom: '40px', opacity: 0.9, textAlign: 'center' }}>
           Discover your year in purchases
-        </Text>
-        <Box 
-          backgroundColor="whiteAlpha200" 
-          paddingHorizontal="xl" 
-          paddingVertical="m" 
-          borderRadius="full"
-        >
-          <Text variant="bodyLargeBold" color="white">
-            Let's Go! ✨
-          </Text>
-        </Box>
-      </Box>
+        </p>
+        <div style={{
+          padding: '16px 32px',
+          backgroundColor: 'rgba(255,255,255,0.2)',
+          borderRadius: '25px',
+          fontWeight: 'bold'
+        }}>
+          Let's Go! ✨
+        </div>
+      </div>
     );
   }
 
   const currentSlideData = slides[currentSlide];
 
   return (
-    <Box 
-      flex={1}
-      justifyContent="center"
-      alignItems="center"
-      backgroundColor={currentSlideData.backgroundColor}
-      onPress={nextSlide}
+    <div 
+      style={{
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: currentSlideData.backgroundColor,
+        color: 'white',
+        cursor: 'pointer',
+        position: 'relative'
+      }}
+      onClick={nextSlide}
     >
       {/* Progress bar */}
-      <Box 
-        position="absolute"
-        top={60}
-        left={20}
-        right={20}
-        flexDirection="row"
-        gap="xs"
-      >
+      <div style={{
+        position: 'absolute',
+        top: '60px',
+        left: '20px',
+        right: '20px',
+        display: 'flex',
+        gap: '4px'
+      }}>
         {slides.map((_, index) => (
-          <Box
+          <div
             key={index}
-            flex={1}
-            height={3}
-            backgroundColor={index <= currentSlide ? "white" : "whiteAlpha300"}
-            borderRadius="xs"
+            style={{
+              flex: 1,
+              height: '3px',
+              backgroundColor: index <= currentSlide ? 'white' : 'rgba(255,255,255,0.3)',
+              borderRadius: '2px'
+            }}
           />
         ))}
-      </Box>
+      </div>
 
       {/* Slide content */}
-      <Box alignItems="center" paddingHorizontal="l">
+      <div style={{ textAlign: 'center', padding: '0 20px' }}>
         {currentSlideData.emoji && (
-          <Text variant="displayLarge" textAlign="center" marginBottom="m">
+          <div style={{ fontSize: '4rem', marginBottom: '20px' }}>
             {currentSlideData.emoji}
-          </Text>
+          </div>
         )}
 
-        <Text 
-          variant="headingLarge" 
-          color="white"
-          textAlign="center"
-          marginBottom="m"
-        >
+        <h1 style={{ 
+          fontSize: '2.5rem', 
+          fontWeight: 'bold', 
+          marginBottom: '20px',
+          textAlign: 'center'
+        }}>
           {currentSlideData.title}
-        </Text>
+        </h1>
 
         {currentSlideData.value && (
-          <Text 
-            variant="displayMedium" 
-            color="white"
-            textAlign="center"
-            marginVertical="m"
-          >
+          <div style={{ 
+            fontSize: '3rem', 
+            fontWeight: 'bold', 
+            margin: '20px 0',
+            textAlign: 'center'
+          }}>
             {currentSlideData.value}
-          </Text>
+          </div>
         )}
 
         {currentSlideData.description && (
-          <Text 
-            variant="bodyLarge" 
-            color="white"
-            textAlign="center"
-            opacity={0.9}
-          >
+          <p style={{ 
+            fontSize: '1.2rem', 
+            textAlign: 'center', 
+            opacity: 0.9,
+            maxWidth: '80%',
+            margin: '0 auto'
+          }}>
             {currentSlideData.description}
-          </Text>
+          </p>
         )}
-      </Box>
+      </div>
 
       {/* Next indicator */}
-      <Box 
-        position="absolute"
-        bottom={40}
-        backgroundColor="whiteAlpha200"
-        paddingHorizontal="l"
-        paddingVertical="m"
-        borderRadius="full"
-      >
-        <Text variant="bodyMedium" color="white">
-          {currentSlide === slides.length - 1 ? 'Tap to see recommendations' : 'Tap to continue'}
-        </Text>
-      </Box>
-    </Box>
+      <div style={{
+        position: 'absolute',
+        bottom: '40px',
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        padding: '12px 24px',
+        borderRadius: '20px',
+        fontSize: '0.9rem'
+      }}>
+        {currentSlide === slides.length - 1 ? 'Tap to see recommendations' : 'Tap to continue'}
+      </div>
+    </div>
   );
 }

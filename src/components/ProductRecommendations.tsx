@@ -1,10 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  useMinisQuery, 
-  Box, 
-  Text, 
-  Spinner
-} from '@shopify/shop-minis-platform-sdk';
+import React from 'react';
 import type { WrappedData } from '../types';
 
 interface ProductRecommendationsProps {
@@ -12,133 +6,91 @@ interface ProductRecommendationsProps {
   onBack: () => void;
 }
 
-const PRODUCT_SEARCH_QUERY = `
-  query ProductSearch($query: String!, $first: Int = 8) {
-    search(query: $query, first: $first) {
-      edges {
-        node {
-          ... on MarketplaceProduct {
-            id
-            title
-            handle
-            priceRange {
-              minVariantPrice {
-                amount
-                currencyCode
-              }
-            }
-            vendor
-          }
-        }
-      }
-    }
-  }
-`;
-
 export default function ProductRecommendations({ wrappedData, onBack }: ProductRecommendationsProps) {
-  const [searchQuery, setSearchQuery] = useState('');
-
-  useEffect(() => {
-    if (wrappedData.favoriteCategory && wrappedData.favoriteCategory !== 'No category') {
-      setSearchQuery(`${wrappedData.favoriteCategory}`);
-    } else {
-      setSearchQuery('trending');
-    }
-  }, [wrappedData]);
-
-  const { loading, data } = useMinisQuery(PRODUCT_SEARCH_QUERY, {
-    variables: { 
-      query: searchQuery,
-      first: 8 
-    }
-  });
-
-  const recommendations = data?.search?.edges?.map((edge: any) => edge.node) || [];
+  // Mock recommendations for now
+  const mockRecommendations = [
+    { id: '1', title: 'Trending Item 1', price: '29.99' },
+    { id: '2', title: 'Popular Product', price: '49.99' },
+    { id: '3', title: 'Bestseller', price: '19.99' },
+    { id: '4', title: 'New Arrival', price: '39.99' }
+  ];
 
   return (
-    <Box flex={1} backgroundColor="purple700">
-      <Box padding="l" paddingTop="xl">
-        <Box 
-          position="absolute"
-          top={20}
-          left={20}
-          backgroundColor="whiteAlpha200"
-          width={40}
-          height={40}
-          borderRadius="full"
-          justifyContent="center"
-          alignItems="center"
-          onPress={onBack}
+    <div style={{
+      height: '100vh',
+      backgroundColor: '#7c3aed',
+      color: 'white',
+      padding: '20px'
+    }}>
+      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+        <button 
+          onClick={onBack}
+          style={{
+            position: 'absolute',
+            top: '20px',
+            left: '20px',
+            backgroundColor: 'rgba(255,255,255,0.2)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '50%',
+            width: '40px',
+            height: '40px',
+            fontSize: '18px',
+            cursor: 'pointer'
+          }}
         >
-          <Text variant="bodyLargeBold" color="white">←</Text>
-        </Box>
+          ←
+        </button>
         
-        <Text variant="headingLarge" color="white" textAlign="center" marginBottom="s">
+        <h1 style={{ fontSize: '2rem', marginBottom: '10px' }}>
           Perfect for a {wrappedData.personalityType} like you
-        </Text>
-        <Text variant="bodyLarge" color="whiteAlpha700" textAlign="center">
+        </h1>
+        <p style={{ opacity: 0.9 }}>
           Based on your love for {wrappedData.favoriteCategory}
-        </Text>
-      </Box>
+        </p>
+      </div>
 
-      {loading && (
-        <Box flex={1} justifyContent="center" alignItems="center">
-          <Spinner size="large" />
-          <Text variant="bodyLarge" color="white" marginTop="m">
-            Finding perfect products for you...
-          </Text>
-        </Box>
-      )}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+        gap: '16px',
+        maxWidth: '800px',
+        margin: '0 auto'
+      }}>
+        {mockRecommendations.map((product) => (
+          <div
+            key={product.id}
+            style={{
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              borderRadius: '12px',
+              padding: '12px',
+              textAlign: 'center'
+            }}
+          >
+            <div style={{
+              width: '100%',
+              height: '120px',
+              backgroundColor: 'rgba(255,255,255,0.2)',
+              borderRadius: '8px',
+              marginBottom: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '2rem'
+            }}>
+              🛍️
+            </div>
 
-      {!loading && recommendations.length > 0 && (
-        <Box padding="l" flex={1}>
-          <Box flexDirection="row" flexWrap="wrap" justifyContent="space-between">
-            {recommendations.map((product: any) => (
-              <Box 
-                key={product.id}
-                width="48%" 
-                backgroundColor="whiteAlpha100" 
-                borderRadius="m" 
-                padding="m" 
-                marginBottom="m"
-              >
-                <Box 
-                  width="100%" 
-                  height={120} 
-                  backgroundColor="whiteAlpha200" 
-                  borderRadius="s" 
-                  marginBottom="m"
-                  justifyContent="center"
-                  alignItems="center"
-                >
-                  <Text variant="headingMedium">🛍️</Text>
-                </Box>
+            <h3 style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: '8px' }}>
+              {product.title}
+            </h3>
 
-                <Text 
-                  variant="bodyMediumBold" 
-                  color="white" 
-                  numberOfLines={2}
-                  marginBottom="xs"
-                >
-                  {product.title}
-                </Text>
-
-                <Text variant="bodyLargeBold" color="white">
-                  ${product.priceRange.minVariantPrice.amount}
-                </Text>
-              </Box>
-            ))}
-          </Box>
-        </Box>
-      )}
-
-      {!loading && recommendations.length === 0 && (
-        <Box flex={1} justifyContent="center" alignItems="center" padding="l">
-          <Text variant="bodyLarge" color="white" textAlign="center">
-            No recommendations found. Try exploring the Shop app!
-          </Text>
-        </Box>
-      )}
-    </Box>
+            <p style={{ fontSize: '1rem', fontWeight: 'bold' }}>
+              ${product.price}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
