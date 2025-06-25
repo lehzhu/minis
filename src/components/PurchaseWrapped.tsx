@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import WrappedSlides from './WrappedSlides';
 import ProductRecommendations from './ProductRecommendations';
 import { calculateWrappedStats } from '../utils/wrappedCalculations';
-import type { WrappedData } from '../types';
+import type { WrappedData } from '../types/index';
 
 // Try the SDK import, fallback to mock if not available
 let useMinisQuery: any;
