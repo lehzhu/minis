@@ -1,5 +1,5 @@
 {
-  "name": "minis",
+  "name": "my-new-mini",
   "private": true,
   "version": "0.0.1",
   "description": "A Shop Mini with WebView and Vite",
@@ -9,17 +9,18 @@
   },
   "dependencies": {
     "@shopify/shop-minis-react": "latest",
+    "@shopify/shop-minis-sdk": "^0.0.41",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
+    "@shopify/shop-minis-cli": "latest-web",
     "@tailwindcss/vite": "^4.1.8",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react": "^4.2.1",
     "tailwindcss": "^4.1.8",
-    "typescript": "^5.8.3",
-    "@shopify/shop-minis-cli": "latest-web"
+    "typescript": "^5.8.3"
   },
   "resolutions": {
     "@apollo/federation": "0.38.1",
