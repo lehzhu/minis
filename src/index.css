@@ -1,1 +1,17 @@
 @import "@shopify/shop-minis-react/styles";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Reset for Shop Mini fullscreen */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}

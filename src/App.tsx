@@ -249,6 +249,22 @@ export function App() {
     }
   };
 
+  // Handle edge tap navigation
+  const handleTap = (event: React.MouseEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const tapX = event.clientX - rect.left;
+    const screenWidth = rect.width;
+    
+    // Left third of screen = previous
+    if (tapX < screenWidth / 3) {
+      prevSlide();
+    }
+    // Right two-thirds of screen = next
+    else if (tapX > screenWidth / 3) {
+      nextSlide();
+    }
+  };
+
   const handleShare = async () => {
     try {
       await share({
@@ -549,74 +565,80 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 via-blue-50 to-indigo-100">
-      {/* Navigation Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="text-2xl">🛍️</div>
-            <div>
-              <div className="font-bold text-gray-800">Shop Wrapped {wrappedData.year}</div>
-              <div className="text-sm text-gray-600">{user.firstName}'s Year in Review</div>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">
-              {currentSlide + 1} / {slides.length}
-            </span>
-            <div className="w-32 bg-gray-200 rounded-full h-2">
+      {/* Story-style progress bar at top */}
+      <div className="fixed top-0 left-0 right-0 z-50 safe-area-inset-top">
+        <div className="flex gap-1 p-2">
+          {slides.map((_, index) => (
+            <div key={index} className="flex-1 h-1 bg-white/30 rounded-full overflow-hidden">
               <div 
-                className="bg-gradient-to-r from-purple-600 to-blue-600 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${((currentSlide + 1) / slides.length) * 100}%` }}
+                className={`h-full bg-white transition-all duration-300 ${
+                  index < currentSlide ? 'w-full' : 
+                  index === currentSlide ? 'w-full animate-pulse' : 'w-0'
+                }`}
               />
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="pt-20 pb-8">
-        <div className="max-w-4xl mx-auto px-4">
+      {/* Main Content - Full screen with tap navigation */}
+      <div 
+        className="pt-8 pb-20 min-h-screen cursor-pointer select-none"
+        onClick={handleTap}
+      >
+        <div className="max-w-4xl mx-auto px-3">
           <div className={`transition-all duration-300 ${isAnimating ? 'opacity-0 transform scale-95' : 'opacity-100 transform scale-100'}`}>
-            <div className="min-h-[70vh] flex items-center justify-center">
+            <div className="min-h-[80vh] flex items-center justify-center">
               {slides[currentSlide].content}
             </div>
           </div>
         </div>
+        
+        {/* Invisible tap zones for visual feedback */}
+        <div className="fixed inset-0 pointer-events-none z-10">
+          <div className="absolute left-0 top-0 w-1/3 h-full opacity-0" />
+          <div className="absolute right-0 top-0 w-2/3 h-full opacity-0" />
+        </div>
       </div>
 
-      {/* Navigation Controls */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-t border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-          <button 
-            onClick={prevSlide}
-            disabled={currentSlide === 0}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-          >
-            ← Previous
-          </button>
-          
-          <div className="flex gap-2">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all ${
-                  index === currentSlide 
-                    ? 'bg-purple-600' 
-                    : 'bg-gray-300 hover:bg-gray-400'
-                }`}
-              />
-            ))}
+      {/* Navigation Controls - iPhone mini friendly */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-gray-200 safe-area-inset-bottom">
+        <div className="max-w-4xl mx-auto px-3 py-3">
+          {/* Main navigation buttons */}
+          <div className="flex justify-center items-center gap-4 mb-3">
+            <button 
+              onClick={prevSlide}
+              disabled={currentSlide === 0}
+              className="flex items-center justify-center gap-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all min-w-[100px] text-sm font-medium"
+            >
+              ← Prev
+            </button>
+            
+            <div className="flex items-center gap-1">
+              <span className="text-xs text-gray-600 mr-2">
+                {currentSlide + 1} of {slides.length}
+              </span>
+              {slides.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    index === currentSlide 
+                      ? 'bg-purple-600' 
+                      : 'bg-gray-300 hover:bg-gray-400'
+                  }`}
+                />
+              ))}
+            </div>
+            
+            <button 
+              onClick={currentSlide === slides.length - 1 ? handleShare : nextSlide}
+              disabled={false}
+              className="flex items-center justify-center gap-1 px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-all min-w-[100px] text-sm font-medium"
+            >
+              {currentSlide === slides.length - 1 ? 'Share' : 'Next'} →
+            </button>
           </div>
-          
-          <button 
-            onClick={nextSlide}
-            disabled={currentSlide === slides.length - 1}
-            className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-          >
-            {currentSlide === slides.length - 1 ? 'Share' : 'Next'} →
-          </button>
         </div>
       </div>
     </div>
